@@ -8,7 +8,7 @@
         tick: function () {
           if (this.data.activo) {
             this.data.profundidad += 0.02; // Velocidad de perforación
-            this.el.setAttribute('position', `0 ${-this.data.profundidad} -3`);
+            this.el.object3D.position.y = -this.data.profundidad;
             document.getElementById('profundidad').textContent = this.data.profundidad.toFixed(2) + ' m';
           }
         },
@@ -24,13 +24,24 @@
         },
         resetOperation: function () {
           this.data.profundidad = 0;
-          this.el.setAttribute('position', `0 0 -3`);
+          this.el.object3D.position.y = 0;
           document.getElementById('profundidad').textContent = '0 m';
         },
         raiseDrill: function () {
           if (!this.data.activo) {
             this.data.brocaArriba = true;
-            this.el.setAttribute('position', `0 1 -3`);
+            let el = this.el;
+            let position = el.object3D.position;
+            let speed = 0.1; // Velocidad de subida
+            function animateUp() {
+              if (position.y < 1) {
+                position.y += speed;
+                requestAnimationFrame(animateUp);
+              } else {
+                position.y = 1;
+              }
+            }
+            animateUp();
           } else {
             alert("Debe detener la perforación antes de subir la broca");
           }
@@ -45,9 +56,21 @@
           }
         },
         lowerDrill: function () {
-          this.el.setAttribute('position', `0 ${-this.data.profundidad} -3`);
+          let el = this.el;
+          let position = el.object3D.position;
+          let targetDepth = -this.data.profundidad;
+          let speed = 0.15; // Velocidad de bajada
+          function animateDown() {
+            if (position.y > targetDepth) {
+              position.y -= speed;
+              requestAnimationFrame(animateDown);
+            } else {
+              position.y = targetDepth;
+              alert("Broca bajada a la profundidad alcanzada");
+            }
+          }
+          animateDown();
           this.data.brocaArriba = false;
-          alert("Broca bajada a la profundidad alcanzada");
         }
       });
     </script>
