@@ -1,123 +1,202 @@
-<!DOCTYPE html>
 <html>
-  <head>
+<head>
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-    <script>
-      AFRAME.registerComponent('perforacion', {
-        schema: { profundidad: { type: 'number', default: 0 }, activo: { type: 'boolean', default: false }, brocaArriba: { type: 'boolean', default: false } },
-        tick: function () {
-          if (this.data.activo) {
-            this.data.profundidad += 0.02; // Velocidad de perforación
-            this.el.object3D.position.y = -this.data.profundidad;
-            document.getElementById('profundidad').textContent = this.data.profundidad.toFixed(2) + ' m';
-          }
-        },
-        startDrilling: function () {
-          if (!this.data.brocaArriba) {
-            this.data.activo = true;
-          } else {
-            alert("Baje la broca antes de iniciar la perforación");
-          }
-        },
-        stopDrilling: function () {
-          this.data.activo = false;
-        },
-        resetOperation: function () {
-          this.data.profundidad = 0;
-          this.el.object3D.position.y = 0;
-          document.getElementById('profundidad').textContent = '0 m';
-        },
-        raiseDrill: function () {
-          if (!this.data.activo) {
-            this.data.brocaArriba = true;
-            let el = this.el;
-            let position = el.object3D.position;
-            let speed = 0.1; // Velocidad de subida
-            function animateUp() {
-              if (position.y < 1) {
-                position.y += speed;
-                requestAnimationFrame(animateUp);
-              } else {
-                position.y = 1;
-              }
-            }
-            animateUp();
-          } else {
-            alert("Debe detener la perforación antes de subir la broca");
-          }
-        },
-        changeBit: function (bitType) {
-          if (this.data.brocaArriba) {
-            document.getElementById('broca').setAttribute('color', bitType);
-            alert(`Broca cambiada a ${bitType}`);
-            this.lowerDrill();
-          } else {
-            alert("Debe subir la broca antes de cambiarla");
-          }
-        },
-        lowerDrill: function () {
-          let el = this.el;
-          let position = el.object3D.position;
-          let targetDepth = -this.data.profundidad;
-          let speed = 0.15; // Velocidad de bajada
-          function animateDown() {
-            if (position.y > targetDepth) {
-              position.y -= speed;
-              requestAnimationFrame(animateDown);
-            } else {
-              position.y = targetDepth;
-              alert("Broca bajada a la profundidad alcanzada");
-            }
-          }
-          animateDown();
-          this.data.brocaArriba = false;
+    <script type="importmap">
+    {
+        "imports": {
+            "config": "./config.js",
+            "drill-controls": "./drill-controls.js",
+            "bit-manager": "./bit-manager.js",
+            "casing-manager": "./casing-manager.js"
         }
-      });
+    }
     </script>
-  </head>
-  <body>
+    <script type="module" src="drill-controls.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
     <a-scene>
-      <!-- Cámara -->
-      <a-entity position="0 1.6 5">
-        <a-camera></a-camera>
-      </a-entity>
+        <!-- Cámara -->
+        <a-entity position="0 1.6 5">
+            <a-camera></a-camera>
+        </a-entity>
 
-      <!-- Torre de perforación -->
-      <a-cylinder position="0 3 -3" radius="0.5" height="6" color="#444"></a-cylinder>
-      <a-box position="0 6 -3" width="2" height="1" depth="2" color="#222"></a-box>
+        <!-- Capas Geológicas -->
+        <a-entity id="geological-layers">
+            <!-- Las capas se generarán dinámicamente -->
+        </a-entity>
 
-      <!-- Broca -->
-      <a-cylinder id="broca" position="0 0 -3" radius="0.2" height="1" color="#ff0000" perforacion></a-cylinder>
+        <!-- Torre de perforación -->
+        <a-cylinder position="0 3 -3" radius="0.5" height="6" color="#444"></a-cylinder>
+        <a-box position="0 6 -3" width="2" height="1" depth="2" color="#222"></a-box>
+
+        <!-- Extraction Pipe -->
+        <a-cylinder id="extraction-pipe" 
+                   position="0 0 -3" 
+                   radius="0.1" 
+                   height="0.1" 
+                   color="#4D4D4D" 
+                   opacity="0.7">
+        </a-cylinder>
+
+        <!-- Broca -->
+        <a-cylinder id="broca" position="0 0 -3" radius="0.2" height="1" color="#0074ff" perforacion></a-cylinder>
+
+        <!-- Casings -->
+        <a-cylinder id="casing-conductor" position="0 0 -3" radius="0.4" height="0.1" color="#FF4D4D" opacity="0.7"></a-cylinder>
+        <a-cylinder id="casing-superficie" position="0 0 -3" radius="0.3" height="0.1" color="#4DFF4D" opacity="0.7"></a-cylinder>
+        <a-cylinder id="casing-intermedio" position="0 0 -3" radius="0.25" height="0.1" color="#4D4DFF" opacity="0.7"></a-cylinder>
+        <a-cylinder id="casing-produccion" position="0 0 -3" radius="0.2" height="0.1" color="#FFD700" opacity="0.7"></a-cylinder>
     </a-scene>
 
-    <!-- Controles -->
-    <div style="position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.7); padding: 10px; color: white;">
-      <p>Profundidad: <span id="profundidad">0 m</span></p>
-      <button onclick="document.querySelector('#broca').components.perforacion.startDrilling()">Iniciar Perforación</button>
-      <button onclick="document.querySelector('#broca').components.perforacion.stopDrilling()">Detener</button>
-      <button onclick="document.querySelector('#broca').components.perforacion.resetOperation()">Reiniciar Operación</button>
-      <button onclick="document.querySelector('#broca').components.perforacion.raiseDrill()">Subir Broca</button>
-      <button onclick="document.querySelector('#broca').components.perforacion.changeBit('#0074ff')">Cambiar a Broca Tricónica</button>
-      <button onclick="document.querySelector('#broca').components.perforacion.changeBit('#ff0000')">Cambiar a Broca PDC</button>
-      <button onclick="document.querySelector('#broca').components.perforacion.changeBit('#ffb900')">Cambiar a Broca Diamante</button>
-      <button onclick="document.querySelector('#broca').components.perforacion.changeBit('#000000')">Cambiar a Broca Sacatestigos</button>
-      <button>Instalar Casing</button>
-      <div class="slider-container">
-        <label for="mud-density-slider">Densidad del lodo: <span id="mud-density-value">1.0</span> g/cm³</label>
-        <input type="range" id="mud-density-slider" class="slider" min="0.8" max="2.5" step="0.1" value="1.0">
-      </div>
-      <div class="slider-container">
-        <label for="rotation-speed-slider">Velocidad de rotación: <span id="rotation-speed-value">60</span> RPM</label>
-        <input type="range" id="rotation-speed-slider" class="slider" min="10" max="2000" step="1" value="60">
-      </div>
-      <div class="slider-container">
-        <label for="flow">Flujo de lodo: <span id="flow-value">250</span> L/min</label>
-        <input type="range" id="flow" class="slider" min="0" max="500" step="10" value="250">
-      </div>
-      <div class="slider-container">
-        <label for="wob-slider">Peso sobre la broca: <span id="wob-value">25</span> kN</label>
-        <input type="range" id="wob-slider" class="slider" min="0" max="50" step="1" value="25">
-      </div>
+    <div class="control-panel">
+        <p>Profundidad: <span id="profundidad">0 m</span></p>
+        <p>Presión: <span id="pressure">0 PSI</span></p>
+        <p>Temperatura: <span id="temperature">0 °C</span></p>
+        <p>Densidad del lodo: <span id="mud-density">1.0 g/cm³</span></p>
+        <p>Velocidad de rotación: <span id="rotation-speed">0 RPM</span></p>
+        <p>Desgaste de broca: <span id="bit-wear">0 %</span></p>
+        <p>Distancia al recurso: <span id="resource-distance">N/A</span></p>
+        <p>Flujo de lodo: <span id="mud-flow">250 L/min</span></p>
+        <p>Peso sobre la broca: <span id="weight-on-bit">25 kN</span></p>
+        <button onclick="window.drillControls.startDrilling()">Iniciar Perforación</button>
+        <button onclick="window.drillControls.stopDrilling()">Detener</button>
+        <button onclick="window.drillControls.resetOperation()">Reiniciar</button>
+        <button onclick="window.drillControls.raiseDrill()">Subir Broca</button>
+
+        <p>Seleccionar Broca:</p>
+        <button onclick="window.drillControls.changeBit('tricone')">Tricónica</button>
+        <button onclick="window.drillControls.changeBit('pdc')">PDC</button>
+        <button onclick="window.drillControls.changeBit('diamond')">Diamante</button>
+        <button onclick="window.drillControls.changeBit('coring')">Sacatestigos</button>
+
+        <p>Acelerar Tiempo:</p>
+        <button onclick="window.drillControls.setTimeMultiplier(1)">x1</button>
+        <button onclick="window.drillControls.setTimeMultiplier(2)">x2</button>
+        <button onclick="window.drillControls.setTimeMultiplier(4)">x4</button>
+        <button onclick="window.drillControls.setTimeMultiplier(8)">x8</button>
+        <button onclick="window.drillControls.setTimeMultiplier(16)">x16</button>
+        <button onclick="window.drillControls.setTimeMultiplier(32)">x32</button>
+
+        <div class="parameter-controls">
+            <div class="parameter-slider">
+                <label for="mudDensity">Densidad del lodo:</label>
+                <input type="range" id="mudDensity" 
+                       min="0.8" max="2.5" step="0.1" 
+                       value="1.0"
+                       onchange="window.drillControls?.updateDrillingParameter('mudDensity', this.value)">
+                <span class="value" id="mudDensity-value">1.0 g/cm³</span>
+            </div>
+
+            <div class="parameter-slider">
+                <label for="rotationSpeed">Velocidad de rotación:</label>
+                <input type="range" id="rotationSpeed" 
+                       min="10" max="2000" step="10" 
+                       value="120"
+                       onchange="window.drillControls?.updateDrillingParameter('rotationSpeed', this.value)">
+                <span class="value" id="rotationSpeed-value">120 RPM</span>
+            </div>
+
+            <div class="parameter-slider">
+                <label for="mudFlow">Flujo de lodo:</label>
+                <input type="range" id="mudFlow" 
+                       min="0" max="500" step="5" 
+                       value="250"
+                       onchange="window.drillControls?.updateDrillingParameter('mudFlow', this.value)">
+                <span class="value" id="mudFlow-value">250 L/min</span>
+            </div>
+
+            <div class="parameter-slider">
+                <label for="weightOnBit">Peso sobre la broca:</label>
+                <input type="range" id="weightOnBit" 
+                       min="0" max="50" step="1" 
+                       value="25"
+                       onchange="window.drillControls?.updateDrillingParameter('weightOnBit', this.value)">
+                <span class="value" id="weightOnBit-value">25 kN</span>
+            </div>
+        </div>
+
+        <div class="slider-container">
+            <p>Altura de Cámara:</p>
+            <input type="range" min="0" max="100" value="0" disabled
+                   oninput="window.drillControls.updateCameraHeight(this.value)">
+        </div>
+
+        <!-- Añadir información de la capa actual -->
+        <div class="layer-info" style="margin-top: 10px; padding: 5px; background: rgba(255,255,255,0.1);">
+            <p>Capa Actual: <span id="current-layer">-</span></p>
+        </div>
+
+        <div class="resource-controls">
+            <h3>Porcentajes de Recursos</h3>
+            <div class="parameter-slider">
+                <label for="waterPercentage">Agua (10-500m):</label>
+                <input type="range" id="waterPercentage" 
+                       min="0" max="100" step="1" 
+                       value="33"
+                       onchange="window.drillControls?.updateResourcePercentage('water', this.value)">
+                <span class="value" id="water-percentage-value">33%</span>
+            </div>
+
+            <div class="parameter-slider">
+                <label for="gasPercentage">Gas (600-5000m):</label>
+                <input type="range" id="gasPercentage" 
+                       min="0" max="100" step="1" 
+                       value="33"
+                       onchange="window.drillControls?.updateResourcePercentage('gas', this.value)">
+                <span class="value" id="gas-percentage-value">33%</span>
+            </div>
+
+            <div class="parameter-slider">
+                <label for="oilPercentage">Petróleo (600-7000m):</label>
+                <input type="range" id="oilPercentage" 
+                       min="0" max="100" step="1" 
+                       value="34"
+                       onchange="window.drillControls?.updateResourcePercentage('oil', this.value)">
+                <span class="value" id="oil-percentage-value">34%</span>
+            </div>
+        </div>
     </div>
-  </body>
+
+    <script type="module">
+        import { config } from './config.js';
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            // Generate geological layers as planes
+            const layers = document.getElementById('geological-layers');
+            config.layers.forEach(layer => {
+                const height = layer.endDepth - layer.startDepth;
+                
+                // Create the plane for the layer
+                const plane = document.createElement('a-plane');
+                plane.setAttribute('position', `2 ${-layer.startDepth - height/2} -3`);
+                plane.setAttribute('height', height);
+                plane.setAttribute('width', 4);
+                plane.setAttribute('color', layer.color);
+                plane.setAttribute('opacity', '0.3');
+                plane.setAttribute('rotation', '0 -90 0');
+                layers.appendChild(plane);
+
+                // Add text label for the layer
+                const text = document.createElement('a-text');
+                text.setAttribute('value', `${layer.name}\n${layer.startDepth}m - ${layer.endDepth}m`);
+                text.setAttribute('position', `2.1 ${-layer.startDepth - height/2} -3`);
+                text.setAttribute('rotation', '0 -90 0');
+                text.setAttribute('align', 'center');
+                text.setAttribute('width', 4);
+                text.setAttribute('color', '#000000');
+                layers.appendChild(text);
+            });
+
+            // Enable slider when controls are ready
+            const slider = document.querySelector('input[type="range"]:not(#mudDensity):not(#rotationSpeed):not(#mudFlow):not(#weightOnBit)');
+            const checkControls = setInterval(() => {
+                if (window.drillControls) {
+                    slider.disabled = false;
+                    clearInterval(checkControls);
+                }
+            }, 100);
+        });
+    </script>
+</body>
 </html>
