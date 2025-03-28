@@ -1,4 +1,5 @@
 <html>
+
 <head>
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <script type="importmap">
@@ -15,11 +16,15 @@
     <link rel="stylesheet" href="styles.css">
     <script src="time.js"></script>
 </head>
+
 <body>
     <a-scene>
         <!-- Cámara -->
-        <a-entity position="0 1.6 5">
+        <a-entity position="25 1.6 5" rotation="25 70 0">
             <a-camera></a-camera>
+        </a-entity>
+
+        <a-entity position="-86.75 0 5.4 " scale="2 2 2" gltf-model="towel.glb" shadow="true">
         </a-entity>
 
         <!-- Capas Geológicas -->
@@ -27,27 +32,27 @@
             <!-- Las capas se generarán dinámicamente -->
         </a-entity>
 
+
         <!-- Torre de perforación -->
         <a-cylinder position="0 3 -3" radius="0.5" height="6" color="#444"></a-cylinder>
-        <a-box position="0 6 -3" width="2" height="1" depth="2" color="#222"></a-box>
+    <!--     <a-box position="0 6 -3" width="2" height="1" depth="2" color="#222"></a-box> -->
 
         <!-- Extraction Pipe -->
-        <a-cylinder id="extraction-pipe" 
-                   position="0 0 -3" 
-                   radius="0.1" 
-                   height="0.1" 
-                   color="#4D4D4D" 
-                   opacity="0.7">
+        <a-cylinder id="extraction-pipe" position="0 0 -3" radius="0.1" height="0.1" color="#4D4D4D" opacity="0.7">
         </a-cylinder>
 
         <!-- Broca -->
         <a-cylinder id="broca" position="0 0 -3" radius="0.2" height="1" color="#0074ff" perforacion></a-cylinder>
 
         <!-- Casings -->
-        <a-cylinder id="casing-conductor" position="0 0 -3" radius="0.4" height="0.1" color="#FF4D4D" opacity="0.7"></a-cylinder>
-        <a-cylinder id="casing-superficie" position="0 0 -3" radius="0.3" height="0.1" color="#4DFF4D" opacity="0.7"></a-cylinder>
-        <a-cylinder id="casing-intermedio" position="0 0 -3" radius="0.25" height="0.1" color="#4D4DFF" opacity="0.7"></a-cylinder>
-        <a-cylinder id="casing-produccion" position="0 0 -3" radius="0.2" height="0.1" color="#FFD700" opacity="0.7"></a-cylinder>
+        <a-cylinder id="casing-conductor" position="0 0 -3" radius="0.4" height="0.1" color="#FF4D4D"
+            opacity="0.7"></a-cylinder>
+        <a-cylinder id="casing-superficie" position="0 0 -3" radius="0.3" height="0.1" color="#4DFF4D"
+            opacity="0.7"></a-cylinder>
+        <a-cylinder id="casing-intermedio" position="0 0 -3" radius="0.25" height="0.1" color="#4D4DFF"
+            opacity="0.7"></a-cylinder>
+        <a-cylinder id="casing-produccion" position="0 0 -3" radius="0.2" height="0.1" color="#FFD700"
+            opacity="0.7"></a-cylinder>
     </a-scene>
 
     <div class="control-panel">
@@ -82,37 +87,29 @@
         <div class="parameter-controls">
             <div class="parameter-slider">
                 <label for="mudDensity">Densidad del lodo:</label>
-                <input type="range" id="mudDensity" 
-                       min="0.8" max="2.5" step="0.1" 
-                       value="1.0"
-                       onchange="window.drillControls?.updateDrillingParameter('mudDensity', this.value)">
+                <input type="range" id="mudDensity" min="0.8" max="2.5" step="0.1" value="1.0"
+                    onchange="window.drillControls?.updateDrillingParameter('mudDensity', this.value)">
                 <span class="value" id="mudDensity-value">1.0 g/cm³</span>
             </div>
 
             <div class="parameter-slider">
                 <label for="rotationSpeed">Velocidad de rotación:</label>
-                <input type="range" id="rotationSpeed" 
-                       min="10" max="2000" step="10" 
-                       value="120"
-                       onchange="window.drillControls?.updateDrillingParameter('rotationSpeed', this.value)">
+                <input type="range" id="rotationSpeed" min="10" max="2000" step="10" value="120"
+                    onchange="window.drillControls?.updateDrillingParameter('rotationSpeed', this.value)">
                 <span class="value" id="rotationSpeed-value">120 RPM</span>
             </div>
 
             <div class="parameter-slider">
                 <label for="mudFlow">Flujo de lodo:</label>
-                <input type="range" id="mudFlow" 
-                       min="0" max="500" step="5" 
-                       value="250"
-                       onchange="window.drillControls?.updateDrillingParameter('mudFlow', this.value)">
+                <input type="range" id="mudFlow" min="0" max="500" step="5" value="250"
+                    onchange="window.drillControls?.updateDrillingParameter('mudFlow', this.value)">
                 <span class="value" id="mudFlow-value">250 L/min</span>
             </div>
 
             <div class="parameter-slider">
                 <label for="weightOnBit">Peso sobre la broca:</label>
-                <input type="range" id="weightOnBit" 
-                       min="0" max="50" step="1" 
-                       value="25"
-                       onchange="window.drillControls?.updateDrillingParameter('weightOnBit', this.value)">
+                <input type="range" id="weightOnBit" min="0" max="50" step="1" value="25"
+                    onchange="window.drillControls?.updateDrillingParameter('weightOnBit', this.value)">
                 <span class="value" id="weightOnBit-value">25 kN</span>
             </div>
         </div>
@@ -120,7 +117,7 @@
         <div class="slider-container">
             <p>Altura de Cámara:</p>
             <input type="range" min="0" max="100" value="0" disabled
-                   oninput="window.drillControls.updateCameraHeight(this.value)">
+                oninput="window.drillControls.updateCameraHeight(this.value)">
         </div>
 
         <!-- Añadir información de la capa actual -->
@@ -132,28 +129,22 @@
             <h3>Porcentajes de Recursos</h3>
             <div class="parameter-slider">
                 <label for="waterPercentage">Agua (400-600m):</label>
-                <input type="range" id="waterPercentage" 
-                       min="0" max="100" step="1" 
-                       value="33"
-                       onchange="window.drillControls?.updateResourcePercentage('water', this.value)">
+                <input type="range" id="waterPercentage" min="0" max="100" step="1" value="33"
+                    onchange="window.drillControls?.updateResourcePercentage('water', this.value)">
                 <span class="value" id="water-percentage-value">33%</span>
             </div>
 
             <div class="parameter-slider">
                 <label for="gasPercentage">Gas (4900-5100m):</label>
-                <input type="range" id="gasPercentage" 
-                       min="0" max="100" step="1" 
-                       value="33"
-                       onchange="window.drillControls?.updateResourcePercentage('gas', this.value)">
+                <input type="range" id="gasPercentage" min="0" max="100" step="1" value="33"
+                    onchange="window.drillControls?.updateResourcePercentage('gas', this.value)">
                 <span class="value" id="gas-percentage-value">33%</span>
             </div>
 
             <div class="parameter-slider">
                 <label for="oilPercentage">Petróleo (6800-7200m):</label>
-                <input type="range" id="oilPercentage" 
-                       min="0" max="100" step="1" 
-                       value="34"
-                       onchange="window.drillControls?.updateResourcePercentage('oil', this.value)">
+                <input type="range" id="oilPercentage" min="0" max="100" step="1" value="34"
+                    onchange="window.drillControls?.updateResourcePercentage('oil', this.value)">
                 <span class="value" id="oil-percentage-value">34%</span>
             </div>
         </div>
@@ -161,16 +152,16 @@
 
     <script type="module">
         import { config } from './config.js';
-        
+
         document.addEventListener('DOMContentLoaded', () => {
             // Generate geological layers as planes
             const layers = document.getElementById('geological-layers');
             config.layers.forEach(layer => {
                 const height = layer.endDepth - layer.startDepth;
-                
+
                 // Create the plane for the layer
                 const plane = document.createElement('a-plane');
-                plane.setAttribute('position', `2 ${-layer.startDepth - height/2} -3`);
+                plane.setAttribute('position', `2 ${-layer.startDepth - height / 2} -3`);
                 plane.setAttribute('height', height);
                 plane.setAttribute('width', 4);
                 plane.setAttribute('color', layer.color);
@@ -181,7 +172,7 @@
                 // Add text label for the layer
                 const text = document.createElement('a-text');
                 text.setAttribute('value', `${layer.name}\n${layer.startDepth}m - ${layer.endDepth}m`);
-                text.setAttribute('position', `2.1 ${-layer.startDepth - height/2} -3`);
+                text.setAttribute('position', `2.1 ${-layer.startDepth - height / 2} -3`);
                 text.setAttribute('rotation', '0 -90 0');
                 text.setAttribute('align', 'center');
                 text.setAttribute('width', 4);
@@ -200,4 +191,5 @@
         });
     </script>
 </body>
+
 </html>
