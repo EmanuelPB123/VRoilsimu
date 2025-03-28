@@ -41,9 +41,9 @@ export const config = {
         weightOnBitBase: 25,         // kN
         weightOnBitRange: { min: 0, max: 50 },
         resources: [
-            { type: 'water', minDepth: 10, maxDepth: 500, percentage: 33 },
-            { type: 'gas', minDepth: 600, maxDepth: 5000, percentage: 33 },
-            { type: 'oil', minDepth: 600, maxDepth: 7000, percentage: 34 }
+            { type: 'water', minDepth: 400, maxDepth: 600, percentage: 33 },
+            { type: 'gas', minDepth: 4900, maxDepth: 5100, percentage: 33 },
+            { type: 'oil', minDepth: 6800, maxDepth: 7200, percentage: 34 }
         ]
     }
 };
