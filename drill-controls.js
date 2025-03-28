@@ -329,7 +329,7 @@ class DrillControls {
     }
 
     updateCameraHeight(value) {
-        const height = this.initialCameraY + (-14000 * (value / 100));
+        const height = this.initialCameraY + (-7500 * (value / 100));/* 14.000 */
         this.camera.object3D.position.y = height;
     }
 
