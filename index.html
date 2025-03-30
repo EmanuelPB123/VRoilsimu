@@ -15,17 +15,58 @@
     <script type="module" src="drill-controls.js"></script>
     <link rel="stylesheet" href="styles.css">
     <script src="time.js"></script>
+    <script>
+                   AFRAME.registerComponent('vibration-on-depth', {
+        schema: {
+          maxDepth: { type: 'number', default: 30 }, // Profundidad máxima (100m)
+          maxVibrationIntensity: { type: 'number', default: 0.04 }, // Intensidad máxima de vibración
+          vibrationSpeed: { type: 'number', default: 2 } // Velocidad de la vibración
+        },
+        init: function () {
+          this.prof = document.querySelector('#profundidad'); // Elemento para mostrar profundidad
+          this.camera = this.el.querySelector('a-camera');
+          this.originalPos = this.camera.getAttribute('position');
+          this.depth = 0;
+        },
+
+        tick: function (time, timeDelta) {
+          // Actualizar profundidad (esto depende de cómo estés calculando la profundidad)
+          this.depth = parseFloat(this.prof.innerText); // Suponiendo que el texto del <span> tiene la profundidad
+
+          // Calculamos la intensidad de la vibración en función de la profundidad
+          let normalizedDepth = Math.min(this.depth / this.data.maxDepth, 1); // Normalizamos la profundidad
+          let vibrationIntensity = this.data.maxVibrationIntensity * (1 - normalizedDepth); // Reducción de la intensidad a medida que la profundidad aumenta
+
+          // Si la profundidad es mayor que el umbral, vibramos la cámara
+          if (this.depth < this.data.maxDepth) {
+            const vibrationOffset = Math.sin(time * this.data.vibrationSpeed) * vibrationIntensity;
+            this.camera.setAttribute('position', {
+              x: this.originalPos.x + vibrationOffset,
+              y: this.originalPos.y + vibrationOffset,
+              z: this.originalPos.z + vibrationOffset
+            });
+          } else {
+            // Si la profundidad es mayor que el máximo, mantener la cámara en su posición original
+            this.camera.setAttribute('position', this.originalPos);
+          }
+        }
+      });
+    </script>
 </head>
 
 <body>
-    <a-scene>
+    <a-scene a-scene vibration-on-depth="depthThreshold: 10; vibrationIntensity: 0.1; vibrationSpeed: 0.1">
         <!-- Cámara -->
-        <a-entity position="25 1.6 5" rotation="0 70 0">
+        <a-entity position="25 1.7 5" rotation="0 70 0">
             <a-camera></a-camera>
         </a-entity>
 
         <a-entity position="-86.75 0 5.4 " scale="2 2 2" gltf-model="towel.glb" shadow="true">
         </a-entity>
+
+ <!-- Crear un suelo plano -->
+ <!-- <a-plane position="0 0 0" rotation="-90 0 0" width="500" height="500" color="#7BC8A4"></a-plane>
+ -->
 
         <!-- Capas Geológicas -->
         <a-entity id="geological-layers">
