@@ -1,153 +1,300 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
 
-body {
-    font-family: 'Inter', sans-serif;
-    margin: 0;
-    padding: 0;
-    background: #000000e8;
-    color: white;
+:root {
+  --primary-color: #00ff00;
+  --primary-hover: #00cc00;
+  --bg-dark: rgba(20, 20, 20, 0.9);
+  --box-shadow: 0 4px 10px rgba(0, 255, 0, 0.2);
 }
 
+body {
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #000000e8;
+  color: white;
+  font-size: 16px;
+}
+
+/* Panel de control principal */
 .control-panel {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background: rgba(20, 20, 20, 0.9);
-    padding: 15px;
-    color: white;
-    max-height: 85vh;
-    overflow-y: auto;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 255, 0, 0.2);
-    backdrop-filter: blur(8px);
-    max-width: 300px;
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  background: var(--bg-dark);
+  padding: 15px;
+  color: white;
+  max-height: 85vh;
+  overflow-y: auto;
+  border-radius: 8px;
+  box-shadow: var(--box-shadow);
+  width: 300px;
+  max-width: 90vw;
+  z-index: 100;
+  transition: all 0.3s ease;
 }
 
 /* Scrollbar mejorado */
 .control-panel::-webkit-scrollbar {
-    width: 6px;
+  width: 6px;
 }
 
 .control-panel::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 4px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
 }
 
 .control-panel::-webkit-scrollbar-thumb {
-    background: #00ff00;
-    border-radius: 4px;
-    transition: background 0.3s;
+  background: var(--primary-color);
+  border-radius: 4px;
+  transition: background 0.3s;
 }
 
 .control-panel::-webkit-scrollbar-thumb:hover {
-    background: #00cc00;
+  background: var(--primary-hover);
 }
 
 .control-panel p {
-    margin: 5px 0;
-    font-size: 0.95em;
-    line-height: 1.4;
+  margin: 5px 0;
+  font-size: 0.95em;
+  line-height: 1.4;
 }
 
 .control-panel span {
-    font-weight: 600;
-    color: #00ff00;
+  font-weight: 600;
+  color: var(--primary-color);
 }
 
 /* Botones */
 button {
-    background: #00ff00;
-    border: none;
-    padding: 8px 12px;
-    font-size: 0.9em;
-    font-weight: 600;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: background 0.3s, transform 0.1s;
+  background: var(--primary-color);
+  border: none;
+  padding: 8px 12px;
+  font-size: 0.9em;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.3s, transform 0.1s;
+  color: #000;
+  margin: 5px 0;
 }
 
 button:hover {
-    background: #00cc00;
-    transform: scale(1.05);
+  background: var(--primary-hover);
+  transform: scale(1.05);
 }
 
 button:active {
-    transform: scale(0.95);
+  transform: scale(0.95);
+}
+
+/* Grupo de botones responsivo */
+.button-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.button-group button {
+  flex: 1 1 auto;
+  min-width: 80px;
 }
 
 /* Sliders */
 .slider-container {
-    margin-top: 12px;
+  margin-top: 12px;
+  width: 100%;
 }
 
 input[type="range"] {
-    width: 100%;
-    margin: 10px 0;
-    -webkit-appearance: none;
-    background: transparent;
+  width: 100%;
+  margin: 10px 0;
+  -webkit-appearance: none;
+  background: transparent;
 }
 
 input[type="range"]::-webkit-slider-runnable-track {
-    background: #00ff00;
-    height: 4px;
-    border-radius: 4px;
+  background: var(--primary-color);
+  height: 4px;
+  border-radius: 4px;
 }
 
 input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 14px;
-    height: 14px;
-    background: white;
-    border-radius: 50%;
-    margin-top: -5px;
-    cursor: pointer;
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  background: white;
+  border-radius: 50%;
+  margin-top: -5px;
+  cursor: pointer;
 }
 
 /* Bloques de información */
 .layer-info, .resource-controls {
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 6px;
-    margin-top: 12px;
-    padding: 12px;
-    background: rgba(20, 20, 20, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  margin-top: 12px;
+  padding: 12px;
+  background: var(--bg-dark);
 }
 
 .layer-info p {
-    margin: 0;
-    font-size: 0.9em;
-    color: white;
+  margin: 0;
+  font-size: 0.9em;
+  color: white;
 }
 
 .parameter-slider {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin: 10px 0;
+  display: flex;
+  flex-direction: column;
+  margin: 10px 0;
+}
+
+.parameter-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
 }
 
 .parameter-slider label {
-    min-width: 140px;
-    font-size: 0.9em;
-    font-weight: 400;
-}
-
-.parameter-slider input {
-    flex: 1;
-    margin: 0 10px;
+  font-size: 0.9em;
+  font-weight: 400;
 }
 
 .parameter-slider .value {
-    min-width: 60px;
-    text-align: right;
-    font-size: 0.9em;
-    font-weight: 600;
-    color: #00ff00;
+  font-size: 0.9em;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.parameter-slider input {
+  width: 100%;
+  margin: 5px 0;
 }
 
 /* Títulos */
 .resource-controls h3 {
-    margin: 0 0 12px 0;
-    color: #00ff00;
-    font-size: 1.1em;
-    font-weight: 600;
+  margin: 0 0 12px 0;
+  color: var(--primary-color);
+  font-size: 1.1em;
+  font-weight: 600;
+}
+
+/* Guía Paso a Paso */
+.guia-paso {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: var(--bg-dark);
+  padding: 15px;
+  color: white;
+  max-height: 85vh;
+  overflow-y: auto;
+  border-radius: 8px;
+  box-shadow: var(--box-shadow);
+  width: 400px;
+  max-width: 90vw;
+  z-index: 100;
+}
+
+.guia-paso p {
+  margin: 5px 0;
+  font-size: 0.95em;
+  line-height: 1.4;
+}
+
+.guia-paso span {
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+/* Media queries para diferentes tamaños de pantalla */
+@media (max-width: 1200px) {
+  .control-panel, .guia-paso {
+    width: 35%;
+  }
+}
+
+@media (max-width: 900px) {
+  .control-panel, .guia-paso {
+    width: 40%;
+  }
+}
+
+@media (max-width: 768px) {
+  .control-panel, .guia-paso {
+    width: 45%;
+    max-height: 70vh;
+  }
+  
+  .parameter-slider {
+    margin: 15px 0;
+  }
+}
+
+@media (max-width: 576px) {
+  body {
+    font-size: 14px;
+  }
+  
+  .control-panel, .guia-paso {
+    position: static;
+    width: auto;
+    max-width: 100%;
+    margin: 10px;
+    max-height: none;
+  }
+  
+  .guia-paso {
+    margin-top: 20px;
+  }
+  
+  .button-group {
+    flex-direction: column;
+  }
+  
+  .button-group button {
+    width: 100%;
+  }
+}
+
+/* Toggle para mostrar/ocultar paneles en móvil */
+.toggle-control-panel, .toggle-guia-paso {
+  display: none;
+  position: fixed;
+  width: 50px;
+  height: 50px;
+  text-align: center;
+  line-height: 50px;
+  font-size: 24px;
+  z-index: 200;
+  box-shadow: var(--box-shadow);
+  background: var(--primary-color);
+  color: black;
+  border-radius: 50%;
+}
+
+.toggle-control-panel {
+  bottom: 20px;
+  left: 20px;
+}
+
+.toggle-guia-paso {
+  bottom: 20px;
+  right: 20px;
+}
+
+@media (max-width: 576px) {
+  .toggle-control-panel, .toggle-guia-paso {
+    display: block;
+  }
+  
+  .control-panel.hidden, .guia-paso.hidden {
+    display: none;
+  }
+  
+  /* Por defecto, ocultar los paneles en móvil al cargar */
+  .control-panel, .guia-paso {
+    display: none;
+  }
 }
